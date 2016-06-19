@@ -1,0 +1,232 @@
+package Topinav::ProcessFile;
+
+use Data::Dumper;
+use Wx qw( :everything );
+
+# ================= parameters =================
+
+my $word_limit=1000;
+
+my $min_font_size=9;
+my $max_font_size=49;
+#my $max_font_size=25;
+
+my $margin=10;
+
+my $word_space_factor=1.6;
+
+my $textctrl_wd=100;
+my $textctrl_ht=30;
+my $statusbar_ht=45;
+
+# ================= initialize =================
+
+my %stopwords;
+my @stopwords=split/\n/, `cat stopwords-en.txt`;
+map { $stopwords{$_}="" } @stopwords;
+
+# ================= main loader =================
+
+sub new {
+	my $class = shift;
+	
+	my $self = {};
+	bless $self, $class;
+	
+	$self->{parent}=shift;
+	$self->{sample_size}=1000;
+	
+	return $self;
+}
+
+# ================= main functions =================
+
+sub reload_file {
+	my $self=shift;
+	my $frame=$self->{parent}->{parent_frame};
+	
+	# ============== initialize / progress ==============
+	
+	my @stat=stat($self->{filename});
+	my $byte_count=$stat[7];
+
+	my $flags = wxPD_CAN_ABORT|wxPD_AUTO_HIDE|wxPD_APP_MODAL;
+	my $dialog=Wx::ProgressDialog->new('Loading dataset', 'Loading dataset, please wait...', $self->{sample_size}, $frame, $flags);
+
+	my $progress_val=0;
+	
+	$frame->SetStatusText("Loading dataset...");
+	
+	my %word_freq;
+	my %pair_score;
+	my %ind_score;
+	
+	my $continue;
+	$self->{parent}->{tagclouds}->load_palette();
+	
+	# ============== sample input file ==============
+
+	open IN, "<$self->{filename}";
+	for (1..$self->{sample_size}) {
+		my $seek=int(rand($byte_count));
+		seek (IN, $seek, 0);
+		my $chunked_line=<IN>;
+		my $line=lc <IN>;
+		
+		$line=~s/\&\#x27\;/'/g;
+		
+		# wikipedia regexp - : elotti namespace, . utani extension kiszurese
+		$line=~s/^\s*\S+?://g;
+		$line=~s/\.\S+\s*$//g;
+		
+		my @szavak=$line=~/[\-a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ']+/g;
+		
+		my %szavak;
+		map { $szavak{$_}="" } sort grep { !exists $stopwords{$_} } @szavak;
+		@szavak=keys %szavak;
+		
+		for my $szo (@szavak) {
+			$word_freq{$szo}++;
+		}
+		
+		for my $i (0..$#szavak) {
+			for my $j ($i+1..$#szavak) {
+				my @pair=sort ($szavak[$i], $szavak[$j]);
+				my $pair="$pair[0] $pair[1]";
+				$pair_score{$pair}++;
+			}
+		}
+		
+		$progress_val++;
+		#if ($progress_val > 10000) { last; }
+		
+		$continue=$dialog->Update($progress_val);
+		last unless $continue;
+	}
+	close IN;
+	
+	$dialog->Destroy;
+	
+	if (!$continue) {
+		$frame->SetStatusText("Canceled.");
+		return;
+	}
+	
+	$frame->SetStatusText("Post-processing dataset...");
+	
+	# ============== filter by Top1000 words ==============
+	
+	my $i=1;
+	my @words=sort { $word_freq{$b} <=> $word_freq{$a} } keys %word_freq;
+	for my $word (@words) {
+		if ($i++ > $word_limit) {
+			delete $word_freq{$word};
+		}
+	}
+	
+	# ============== generate %ind_score based on filtered word pair list ==============
+	
+	for my $word_pair (sort { $pair_score{$b} <=> $pair_score{$a} } keys %pair_score) {
+		$word_pair=~/ /;
+		
+		if (exists $word_freq{$`} && exists $word_freq{$'}) {
+			$ind_score{$word_pair}=$word_freq{$`}+$word_freq{$'};
+		}
+	}
+	
+	# ============== determine min. ind score ==============
+	
+	my $upper_prop=0.35;
+	
+	my $word_pair_count=scalar keys %ind_score;
+	my $upper_half_word_pair=$word_pair_count*$upper_prop;
+	$i=1;
+
+	my $min_ind_score=0;
+	my $min_pair_score=0;
+	
+	open OUT, ">scores.txt";
+	for my $word_pair (sort { $pair_score{$b} <=> $pair_score{$a} } keys %ind_score) {
+		print OUT "$pair_score{$word_pair} $ind_score{$word_pair}\n";
+		if ($i++ >= $upper_half_word_pair) {
+			$min_ind_score=$ind_score{$word_pair};
+			$min_pair_score=$pair_score{$word_pair};
+			last;
+		}
+	}
+	close OUT;
+	
+	# egyelore...
+	my @ind_scores=sort { $a <=> $b } values %ind_score;
+	$min_pair_score=2;
+	$min_ind_score=$ind_scores[-1]*$upper_prop;
+	
+	# ============== filter %pair_score based on both scores ==============
+
+	my @word_pairs=keys %pair_score;
+	
+	for my $word_pair (@word_pairs) {
+		if (!exists $ind_score{$word_pair} || $pair_score{$word_pair} < $min_pair_score || $ind_score{$word_pair} < $min_ind_score) {
+			delete $pair_score{$word_pair};
+		}
+	}
+	
+	#print STDERR "min_pair_score: $min_pair_score\n";
+	#print STDERR "min_ind_score: $min_ind_score\n";
+	
+	# ============== generate Pajek file ==============
+	
+	my %word_id;
+	my $last_word_id=1;
+	
+	my $pajek_filename="infomap";
+
+	my @vertices;
+	my @edges;
+	for my $word_pair (keys %pair_score) {
+		$word_pair=~/ /;
+		
+		if (!exists $word_id{$`}) {
+			push @vertices, "$last_word_id \"$`\"";
+			$word_id{$`}=$last_word_id++;
+		}
+		if (!exists $word_id{$'}) {
+			push @vertices, "$last_word_id \"$'\"";
+			$word_id{$'}=$last_word_id++;
+		}
+		
+		push @edges, "$word_id{$`} $word_id{$'} $pair_score{$word_pair}";
+	}
+	
+	open OUT, ">$pajek_filename.net";
+	print OUT "*Vertices ".(scalar @vertices)."\n".
+		(join "\n", @vertices)."\n";
+	print OUT "*Edges ".(scalar @edges)."\n".
+		(join "\n", @edges)."\n";
+	close OUT;
+
+	#print STDERR "*Vertices ".(scalar @vertices)."\n";
+	#print STDERR "*Edges ".(scalar @edges)."\n";
+	
+	my $tagclouds=$self->{parent}->{tagclouds};
+
+	%{$tagclouds->{words}}=();
+	map { $tagclouds->{words}->{$_}=$word_freq{$_} } keys %word_id;
+	
+	# ============== run clustering ==============
+	
+	`Infomap $pajek_filename.net ./`;
+	$tagclouds->load_word_clusters("$pajek_filename.tree");
+
+	unlink "$pajek_filename.net";
+	unlink "$pajek_filename.tree";
+	
+	$max_font_size=$tagclouds->test_word_clusters($frame);
+	
+	$tagclouds->clear_labels();
+	$tagclouds->show_word_clusters($frame);
+	
+	$frame->SetStatusText("$self->{filename} loaded (".(scalar @vertices)." keywords shown).");
+}
+
+1;
