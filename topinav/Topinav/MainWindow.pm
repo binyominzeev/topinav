@@ -39,6 +39,12 @@ sub OnInit {
 	$self->{frame}=$frame;
 	$self->{frame}->{parent_obj}=$self;
 	
+	my $wd=$frame->GetSize->GetWidth;
+	my $ht=$frame->GetSize->GetHeight;
+	
+	my $tagcloud_rel_wd=0.7;
+	my $tagcloud_rel_ht=0.6;
+	
 	# ==== made by wxFormDesigner ====
 	
 	my $rf_sizer=new Wx::BoxSizer(wxVERTICAL);
@@ -52,14 +58,14 @@ sub OnInit {
 	
 	my $diagram_panel=new Wx::Panel($diagram_splitter, wxID_ANY);
 	
-	$diagram_splitter->SplitHorizontally($tagcloud_panel, $diagram_panel, 173);
+	$diagram_splitter->SplitHorizontally($tagcloud_panel, $diagram_panel, int($ht*$tagcloud_rel_ht));
 	$tgdia_sizer->Add($diagram_splitter, 1, wxEXPAND, 5);
 
 	$tgdia_panel->SetSizer($tgdia_sizer);
 
 	my $rf_panel=new Wx::Panel($rf_splitter, wxID_ANY);
 	
-	$rf_splitter->SplitVertically($tgdia_panel, $rf_panel, 325);
+	$rf_splitter->SplitVertically($tgdia_panel, $rf_panel, int($wd*$tagcloud_rel_wd));
 	$rf_sizer->Add($rf_splitter, 1, wxEXPAND, 5);
 	
 	$self->{diagram_splitter}=$diagram_splitter;
@@ -67,9 +73,13 @@ sub OnInit {
 	
 	$self->{tagcloud_panel}=$tagcloud_panel;
 	$self->{diagram_panel}=$diagram_panel;
+	$self->{tgdia_panel}=$tgdia_panel;
 	$self->{rf_panel}=$rf_panel;
 	
 	$self->init_menus();
+	
+	EVT_MOTION($frame, \&OnMouseOut);
+	EVT_SIZE($frame, \&OnResize);
 
 	#$self->{tagcloud}=new Topinav::Tagclouds(parent => $self, frame => $self->{tagcloud_panel});
 	$self->{records_fields}=new Topinav::RecordsFields(parent => $self, frame => $self->{rf_panel});
@@ -221,7 +231,13 @@ sub OnFieldsRecords {
 	my ($frame, $event) = @_;
 	my $self=$frame->{parent_obj};
 	
-	$self->{records_fields}->toggle_panel();
+	if ($self->{rf_splitter}->IsSplit()) {
+		$self->{rf_sash}=$self->{rf_splitter}->GetSashPosition();
+		$self->{rf_splitter}->Unsplit();
+	} else {
+		$self->{rf_splitter}->SplitVertically($self->{tgdia_panel}, $self->{rf_panel});
+		$self->{rf_splitter}->SetSashPosition($self->{rf_sash});
+	}
 }
 
 sub OnDiagrams {
@@ -286,7 +302,11 @@ sub OnResize {
 	my $obj=$self->{parent_obj};
 	
 	if (!exists $obj->{tagclouds}) {
-		$obj->{tagclouds}="";
+		print STDERR $obj->{tagcloud_panel}->GetSize->GetHeight;
+		print STDERR "\n";
+		exit;
+		#$obj->{tagclouds}="";
+		$obj->{tagclouds}=new Topinav::Tagclouds(parent => $obj, frame => $obj->{tagcloud_panel});
 		#$obj->{tagclouds}=new Topinav::Tagclouds($obj);
 		
 		#$obj->{records_fields}->{split}->Unsplit();

@@ -44,15 +44,13 @@ sub new {
 	$self->{parent}=$param{parent};
 	$self->{frame}=$param{frame};
 	
-	
+	$self->{frame}->SetBackgroundColour(Wx::Colour->new(255, 255, 255));
 
-	#$self->load_palette();
-	#$self->load_word_weights();
-	#$self->load_word_clusters();
+	$self->load_palette();
+	$self->load_word_weights();
+	$self->load_word_clusters();
 	
-	#my $frame=$self->{parent}->{frame};
-
-	#$max_font_size=$self->test_word_clusters();
+	$max_font_size=$self->test_word_clusters();
 	#$self->clear_labels();
 	#$self->show_word_clusters();
 
@@ -135,7 +133,7 @@ sub load_word_clusters {
 
 sub test_word_clusters {
 	my $self=shift;
-	my $frame=$self->{parent}->{frame};
+	my $frame=$self->{frame};
 	
 	my @words=sort keys %{$self->{word_cluster}};
 	
