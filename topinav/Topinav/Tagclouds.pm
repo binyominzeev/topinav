@@ -1,10 +1,13 @@
 package Topinav::Tagclouds;
 
+#use base 'MainWindow';
+
 use Imager;
 use List::Util qw(first max maxstr min minstr reduce shuffle sum);
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_MOTION);
+use Wx::Event qw(EVT_MOTION EVT_SIZE EVT_SLIDER EVT_TEXT EVT_KILL_FOCUS EVT_LEFT_DOWN);
+use Number::Format 'format_number';
 
 use Data::Dumper;
 
@@ -43,6 +46,7 @@ sub new {
 	
 	$self->{parent}=$param{parent};
 	$self->{frame}=$param{frame};
+	$self->{frame}->{parent_obj}=$self;
 	
 	$self->{frame}->SetBackgroundColour(Wx::Colour->new(255, 255, 255));
 
@@ -50,14 +54,39 @@ sub new {
 	$self->load_word_weights();
 	$self->load_word_clusters();
 	
-	$max_font_size=$self->test_word_clusters();
-	#$self->clear_labels();
-	#$self->show_word_clusters();
+	$self->show_slider();
+	
+	EVT_MOTION($self->{frame}, \&OnMouseOut);
+	EVT_SIZE($self->{frame}, \&OnResize);
 
 	return $self;
 }
 
 # ================= main functions =================
+
+sub OnResize {
+	my ($self, $event)=@_;
+	my $obj=$self->{parent_obj};
+
+	$max_font_size=$obj->test_word_clusters($self);
+	
+	$obj->clear_labels();
+	if ($max_font_size > 0) {
+		$obj->show_word_clusters($self);
+	}
+	
+	my $frame=$obj->{frame};
+	my $win_wd=$frame->GetSize->GetWidth;
+	my $win_ht=$frame->GetSize->GetHeight;
+
+	$textctrl_wd=$obj->{textctrl}->GetSize->GetWidth;
+	$textctrl_ht=$obj->{textctrl}->GetSize->GetHeight;
+
+	$obj->{slider}->SetClientSize($win_wd-$textctrl_wd, $textctrl_ht);
+	$obj->{textctrl}->Move($win_wd-$textctrl_wd, 0);
+
+	return 1;
+}
 
 sub load_palette {
 	my $self=shift;
@@ -136,7 +165,6 @@ sub test_word_clusters {
 	my $frame=$self->{frame};
 	
 	my @words=sort keys %{$self->{word_cluster}};
-	
 	if (@words == 0) { return 10; }
 	
 	my $win_ht=$frame->GetSize->GetHeight - $textctrl_ht - $statusbar_ht;
@@ -155,13 +183,19 @@ sub test_word_clusters {
 	my $upper_ht_factor=1.1;
 	
 	while (!($win_ht * $lower_ht_factor <= $new_win_ht && $new_win_ht <= $win_ht * $upper_ht_factor)) {
-		print STDERR "($new_win_ht < $win_ht * $lower_ht_factor) { $sugg_max_font_size\n";
+		#print STDERR "($new_win_ht < $win_ht * $lower_ht_factor) { $sugg_max_font_size\n";
 		
 		if ($new_win_ht > $win_ht * $upper_ht_factor) {
 			$sugg_max_font_size-=1;
 		} elsif ($new_win_ht < $win_ht * $lower_ht_factor) {
 			$sugg_max_font_size+=1;
 		}
+		
+		if ($new_win_ht == $self->font_size_to_height($sugg_max_font_size)) {
+			$sugg_max_font_size=0;
+			last;
+		}
+		
 		$new_win_ht=$self->font_size_to_height($sugg_max_font_size);
 	}
 	
@@ -177,7 +211,7 @@ sub test_word_clusters {
 sub font_size_to_height {
 	my $self=shift;
 	my $sugg_max_font_size=shift;
-	my $frame=$self->{parent}->{frame};
+	my $frame=$self->{frame};
 	my @words=sort keys %{$self->{word_cluster}};
 	
 	my $size_factor=$sugg_max_font_size/$max_font_size;
@@ -210,7 +244,7 @@ sub font_size_to_height {
 
 sub show_word_clusters {
 	my $self=shift;
-	my $frame=$self->{parent}->{frame};
+	my $frame=$self->{frame};
 	my @words=sort keys %{$self->{word_cluster}};
 	
 	my $x=$margin;
@@ -247,11 +281,12 @@ sub show_word_clusters {
 
 sub show_label {
 	my ($self, $text, $pos_x, $pos_y, $size, $r, $g, $b)=@_;
-	my $frame=$self->{parent}->{frame};
+	my $frame=$self->{frame};
 
 	my $label=Wx::StaticText->new($frame, -1, $text, [$pos_x, $pos_y]);
 	
 	EVT_MOTION($label, \&OnHover);
+	EVT_LEFT_DOWN($label, \&OnClick);
 	my $font=Wx::Font->new($size, wxMODERN, wxNORMAL, wxNORMAL, 0, 'Times');
 
 	$label->SetFont($font);
@@ -280,23 +315,23 @@ sub OnHover {
 	my $frame=$self->GetParent;
 	my $obj=$frame->{parent_obj};
 	
-	my $word_cluster=$obj->{tagclouds}->{word_cluster};
-	my $palette=$obj->{tagclouds}->{palette};
-	my $labels=$obj->{tagclouds}->{labels};
+	my $word_cluster=$obj->{word_cluster};
+	my $palette=$obj->{palette};
+	my $labels=$obj->{labels};
 
 	my $label=$self->GetLabel;
 	my $cluster=$word_cluster->{$label};
 	
 	my $color_count=@$palette;
 
-	$obj->{tagclouds}->{hover_cluster}=$cluster;
+	$obj->{hover_cluster}=$cluster;
 
 	my $factor_light=1.1;
 	my $factor_dark=2;
 
 	for my $word (keys %$word_cluster) {
 		my $this_word_cluster=$word_cluster->{$word};
-		my $font_size=$obj->{tagclouds}->{words}->{$word};
+		my $font_size=$obj->{words}->{$word};
 
 		my $font_color=$this_word_cluster % $color_count;
 		my ($r, $g, $b)=@{$palette->[$font_color]};
@@ -319,26 +354,106 @@ sub OnHover {
 	}
 }
 
+sub show_slider {
+	my $self=shift;
+	my $frame=$self->{frame};
+	
+	my $win_wd=$self->get_window_width;
+	my $win_ht=$self->get_window_height;
+	
+	$self->{slider}=Wx::Slider->new($frame, -1, 1000, 0, 10000);
+	$self->{textctrl}=Wx::TextCtrl->new($frame, -1, "");
+		
+	EVT_SLIDER($self->{parent}, $self->{slider}, \&OnSlider);
+	EVT_TEXT($self->{parent}, $self->{textctrl}, \&OnSliderText);
+	EVT_KILL_FOCUS($self->{textctrl}, \&SliderTextFormat);
+
+	return;
+}
+
+sub get_window_width {
+	my $self=shift;
+	my $frame=$self->{frame};
+	
+	my $win_wd=$frame->GetSize->GetWidth;
+	
+	return $win_wd;
+}
+
+sub get_window_height {
+	my $self=shift;
+	my $frame=$self->{frame};
+	
+	my $win_ht=$frame->GetSize->GetHeight;
+	
+	return $win_ht-50;
+}
+
+sub SliderTextFormat {
+	my ($self, $event) = @_;
+	my $val=$self->GetValue;
+	$val=~s/[,\.]//g;
+	$self->SetValue(format_number($val));
+}
+
+sub OnSlider {
+	my ($self, $event) = @_;
+	
+	if (!$self->{tagclouds}) {
+		# in case of calling directly from MainWindow (on initialization)
+		$self=$self->{parent};
+	}
+	
+	my $slider_val=$self->{tagclouds}->{slider}->GetValue;
+	$self->{process_file}->{sample_size}=$slider_val;
+	
+	$self->{tagclouds}->{textctrl}->SetValue(format_number($slider_val));
+}
+
+sub OnSliderText {
+	my ($self, $event) = @_;
+	
+	my $text_val=$self->{tagclouds}->{textctrl}->GetValue;
+	$text_val=~s/[,\.]//g;
+	$self->{process_file}->{sample_size}=$text_val;
+	
+	$self->{tagclouds}->{slider}->SetValue($text_val);
+}
+
+sub OnClick {
+	my $self=shift;
+	
+	#my $frame=$self->GetParent;
+	#my $obj=$frame->{parent_obj}->{parent};
+	
+	#my $label=$self->GetLabel;
+	
+	#print STDERR "$label\n";
+	#print STDERR Dumper $obj->{process_file}->{word_records}->{$label};
+}
+
 sub OnMouseOut {
 	my $self=shift;
-	if (!exists $self->{hover_cluster}) { return; }
+	my $obj=$self->{parent_obj};
 
-	my $color_count=@{$self->{palette}};
+	if (!exists $obj->{hover_cluster}) { return; }
 
-	for my $word (keys %{$self->{word_cluster}}) {
-		my $word_cluster=$self->{word_cluster}->{$word};
-		my $font_size=$self->{words}->{$word};
+	my $color_count=@{$obj->{palette}};
+
+	for my $word (keys %{$obj->{word_cluster}}) {
+		my $word_cluster=$obj->{word_cluster}->{$word};
+		my $font_size=$obj->{words}->{$word};
 
 		my $font_color=$word_cluster % $color_count;
-		my ($r, $g, $b)=@{$self->{palette}->[$font_color]};
+		my ($r, $g, $b)=@{$obj->{palette}->[$font_color]};
 
 		my $font=Wx::Font->new($font_size, wxMODERN, wxNORMAL, wxNORMAL, 0, 'Times');
 		
-		$self->{labels}->{$word}->SetFont($font);
-		$self->{labels}->{$word}->SetForegroundColour(Wx::Colour->new($r, $g, $b));
+		$obj->{labels}->{$word}->SetFont($font);
+		$obj->{labels}->{$word}->SetForegroundColour(Wx::Colour->new($r, $g, $b));
 	}
 	
-	delete $self->{hover_cluster};
+	delete $obj->{hover_cluster};
 }
 
 sub set_rgb_alpha {

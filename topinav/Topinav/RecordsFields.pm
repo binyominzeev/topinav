@@ -12,7 +12,8 @@ sub new {
 	$self->{parent}=$param{parent};
 	$self->{frame}=$param{frame};
 	
-	my $button2=Wx::Button->new($self->{frame}, -1, 'RecordsFields');
+	#my $button2=Wx::Button->new($self->{frame}, -1, 'RecordsFields');
+	my $records_list=Wx::ListCtrl->new($self->{frame}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
 	
 	return $self;
 }

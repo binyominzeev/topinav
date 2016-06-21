@@ -29,11 +29,15 @@ map { $stopwords{$_}="" } @stopwords;
 
 sub new {
 	my $class = shift;
+	my %param=@_;
 	
 	my $self = {};
 	bless $self, $class;
 	
-	$self->{parent}=shift;
+	$self->{parent}=$param{parent};
+	$self->{frame}=$param{frame};
+	$self->{frame}->{parent_obj}=$self;
+	
 	$self->{sample_size}=1000;
 	
 	return $self;
@@ -43,7 +47,7 @@ sub new {
 
 sub reload_file {
 	my $self=shift;
-	my $frame=$self->{parent}->{parent_frame};
+	my $frame=$self->{parent}->{frame};
 	
 	# ============== initialize / progress ==============
 	
@@ -55,6 +59,14 @@ sub reload_file {
 
 	my $progress_val=0;
 	
+	# ============== test separator ==============
+	
+	my $separator="\t";
+	my $count=test_separator($self->{filename}, " ");
+	if ($count == 1) {
+		$separator=" ";
+	}
+
 	$frame->SetStatusText("Loading dataset...");
 	
 	my %word_freq;
@@ -64,7 +76,12 @@ sub reload_file {
 	my $continue;
 	$self->{parent}->{tagclouds}->load_palette();
 	
+	%{$self->{records}}=();
+	%{$self->{word_records}}=();
+
 	# ============== sample input file ==============
+	
+	my $i=1;
 
 	open IN, "<$self->{filename}";
 	for (1..$self->{sample_size}) {
@@ -72,6 +89,9 @@ sub reload_file {
 		seek (IN, $seek, 0);
 		my $chunked_line=<IN>;
 		my $line=lc <IN>;
+		
+		my @line=split/$separator/, $line;
+		$self->{records}->{$i}=\@line;
 		
 		$line=~s/\&\#x27\;/'/g;
 		
@@ -87,6 +107,7 @@ sub reload_file {
 		
 		for my $szo (@szavak) {
 			$word_freq{$szo}++;
+			push @{$self->{word_records}->{$szo}}, $i;
 		}
 		
 		for my $i (0..$#szavak) {
@@ -98,6 +119,7 @@ sub reload_file {
 		}
 		
 		$progress_val++;
+		$i++;
 		#if ($progress_val > 10000) { last; }
 		
 		$continue=$dialog->Update($progress_val);
@@ -227,6 +249,25 @@ sub reload_file {
 	$tagclouds->show_word_clusters($frame);
 	
 	$frame->SetStatusText("$self->{filename} loaded (".(scalar @vertices)." keywords shown).");
+}
+
+sub test_separator {
+	my $filename=shift;
+	my $test_separator=shift;
+	
+	# op-sys dependent, to universalize
+	`head -n20 $filename | tail -n10 > tmp`;
+	my @lines=split/\n/, `cat tmp`;
+
+	my %field_counts;
+	for my $line (@lines) {
+		my @line=split/$test_separator/, $line;
+		$field_counts{scalar @line}="";
+	}
+	
+	unlink "tmp";
+
+	return scalar keys %field_counts;
 }
 
 1;
