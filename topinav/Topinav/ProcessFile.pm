@@ -48,6 +48,7 @@ sub new {
 sub reload_file {
 	my $self=shift;
 	my $frame=$self->{parent}->{frame};
+	my $obj=$self->{parent};
 	
 	# ============== initialize / progress ==============
 	
@@ -62,9 +63,17 @@ sub reload_file {
 	# ============== test separator ==============
 	
 	my $separator="\t";
-	my $count=test_separator($self->{filename}, " ");
+	my $count=$self->test_separator($self->{filename}, " ");
 	if ($count == 1) {
 		$separator=" ";
+	} else {
+		$self->test_separator($self->{filename}, "\t");
+	}
+	
+	my $list=$obj->{records_fields}->{records_list};
+	
+	for my $i (1..$self->{field_count}) {
+		$list->InsertColumn($i-1, "Column$i");
 	}
 
 	$frame->SetStatusText("Loading dataset...");
@@ -89,6 +98,7 @@ sub reload_file {
 		seek (IN, $seek, 0);
 		my $chunked_line=<IN>;
 		my $line=lc <IN>;
+		chomp $line;
 		
 		my @line=split/$separator/, $line;
 		$self->{records}->{$i}=\@line;
@@ -252,6 +262,7 @@ sub reload_file {
 }
 
 sub test_separator {
+	my $self=shift;
 	my $filename=shift;
 	my $test_separator=shift;
 	
@@ -266,6 +277,11 @@ sub test_separator {
 	}
 	
 	unlink "tmp";
+	
+	if (scalar keys %field_counts == 1) {
+		my @field_counts=keys %field_counts;
+		$self->{field_count}=$field_counts[0];
+	}
 
 	return scalar keys %field_counts;
 }

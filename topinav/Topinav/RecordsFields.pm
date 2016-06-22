@@ -11,9 +11,14 @@ sub new {
 	
 	$self->{parent}=$param{parent};
 	$self->{frame}=$param{frame};
+
+	my $sizer=new Wx::BoxSizer(wxVERTICAL);
+
+	$self->{records_list}=Wx::ListCtrl->new($self->{frame}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
+	$sizer->Add($self->{records_list}, 1, wxALL|wxEXPAND, 5);
 	
-	#my $button2=Wx::Button->new($self->{frame}, -1, 'RecordsFields');
-	my $records_list=Wx::ListCtrl->new($self->{frame}, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
+	$self->{frame}->SetSizer($sizer);
+	$self->{frame}->Layout();
 	
 	return $self;
 }

@@ -53,31 +53,58 @@ sub new {
 	$self->load_palette();
 	$self->load_word_weights();
 	$self->load_word_clusters();
-	
+
+	#$self->calculate_font_sizes();
 	$self->show_slider();
 	
+	#EVT_LEFT_DOWN($self->{frame}, \&OnClick);
 	EVT_MOTION($self->{frame}, \&OnMouseOut);
 	EVT_SIZE($self->{frame}, \&OnResize);
-
+	
 	return $self;
 }
 
 # ================= main functions =================
 
+sub suggest_font_size {
+	my $self=shift;
+	
+	my $frame=$self->{frame};
+	my $win_wd=$frame->GetSize->GetWidth;
+	my $win_ht=$frame->GetSize->GetHeight;
+	
+	my $area=$win_wd*$win_ht;
+	my $max_font_size=0;
+
+	for my $area_i (0..$#{$self->{fontsize_areas}}-1) {
+		my $this_area=$self->{fontsize_areas}->[$area_i];
+		my $next_area=$self->{fontsize_areas}->[$area_i+1];
+		
+		if ($this_area <= $area && $area <= $next_area) {
+			$max_font_size=$self->{fontsize_area}->{$this_area};
+			last;
+		}
+	}
+	
+	return $max_font_size;
+}
+
 sub OnResize {
 	my ($self, $event)=@_;
 	my $obj=$self->{parent_obj};
 
+	my $frame=$obj->{frame};
+	my $win_wd=$frame->GetSize->GetWidth;
+
 	$max_font_size=$obj->test_word_clusters($self);
+	#print STDERR "(";
+	#$max_font_size=$obj->suggest_font_size();
+	#print STDERR ")\n";
 	
 	$obj->clear_labels();
 	if ($max_font_size > 0) {
 		$obj->show_word_clusters($self);
 	}
-	
-	my $frame=$obj->{frame};
-	my $win_wd=$frame->GetSize->GetWidth;
-	my $win_ht=$frame->GetSize->GetHeight;
 
 	$textctrl_wd=$obj->{textctrl}->GetSize->GetWidth;
 	$textctrl_ht=$obj->{textctrl}->GetSize->GetHeight;
@@ -160,6 +187,21 @@ sub load_word_clusters {
 	}
 }
 
+sub calculate_font_sizes {
+	my $self=shift;
+	my $wd=200;
+	
+	%{$self->{fontsize_area}}=();
+	@{$self->{fontsize_areas}}=();
+	for my $font_size (map { $_ * 2 } (5..25)) {
+		$new_win_ht=$self->font_size_to_height($font_size, $wd);
+		my $area=$wd*$new_win_ht;
+		
+		push @{$self->{fontsize_areas}}, $area;
+		$self->{fontsize_area}->{$area}=$font_size;
+	}
+}
+
 sub test_word_clusters {
 	my $self=shift;
 	my $frame=$self->{frame};
@@ -168,6 +210,8 @@ sub test_word_clusters {
 	if (@words == 0) { return 10; }
 	
 	my $win_ht=$frame->GetSize->GetHeight - $textctrl_ht - $statusbar_ht;
+		my $win_wd=$frame->GetSize->GetWidth;
+	
 	my $sugg_max_font_size;
 	
 	if (exists $self->{last_height}) {
@@ -205,6 +249,8 @@ sub test_word_clusters {
 		$self->{words}->{$word}*=$sugg_max_font_size/$max_font_size;
 	}
 	
+	#print STDERR "$win_wd, $win_ht, ".($win_wd*$win_ht).", $sugg_max_font_size\n";
+	
 	return $sugg_max_font_size;
 }
 
@@ -221,6 +267,10 @@ sub font_size_to_height {
 	
 	my $max_ht=0;
 	my $win_wd=$frame->GetSize->GetWidth;
+	
+	if (@_ > 0) {
+		$win_wd=shift;
+	}
 	
 	for my $word (@words) {
 		my $font_size=$self->{words}->{$word}*$size_factor;
@@ -266,6 +316,9 @@ sub show_word_clusters {
 		my ($wd, $ht)=(0, 0);
 		
 		($self->{labels}->{$word}, $wd, $ht)=$self->show_label($word, $x, $y, $font_size, $r, $g, $b);
+		$self->{labels}->{$word}->{x}=$x;
+		$self->{labels}->{$word}->{y}=$y;
+
 		if ($ht > $max_ht) { $max_ht=$ht; }
 
 		if ($x + $wd*$word_space_factor + $margin > $win_wd) {
@@ -274,8 +327,17 @@ sub show_word_clusters {
 			$max_ht=0;
 			
 			$self->{labels}->{$word}->Move($x, $y);
+			$self->{labels}->{$word}->{x}=$x;
+			$self->{labels}->{$word}->{y}=$y;
 		}
+		#EVT_LEFT_DOWN($self->{labels}->{$word}, \&OnClick);
+		
 		$x+=$wd*$word_space_factor;
+	}
+	
+	for my $word (@words) {
+		#EVT_LEFT_DOWN($self->{labels}->{$word}, \&OnClick);
+		$self->{labels}->{$word}->Move($self->{labels}->{$word}->{x}, $self->{labels}->{$word}->{y});
 	}
 }
 
@@ -321,11 +383,12 @@ sub OnHover {
 
 	my $label=$self->GetLabel;
 	my $cluster=$word_cluster->{$label};
-	
+	$obj->{label}=$label;
+		
 	my $color_count=@$palette;
 
 	$obj->{hover_cluster}=$cluster;
-
+	
 	my $factor_light=1.1;
 	my $factor_dark=2;
 
@@ -423,13 +486,33 @@ sub OnSliderText {
 sub OnClick {
 	my $self=shift;
 	
-	#my $frame=$self->GetParent;
-	#my $obj=$frame->{parent_obj}->{parent};
+	my $frame=$self->GetParent;
+	my $obj=$frame->{parent_obj}->{parent};
 	
-	#my $label=$self->GetLabel;
+	my $label=$self->GetLabel;
 	
 	#print STDERR "$label\n";
 	#print STDERR Dumper $obj->{process_file}->{word_records}->{$label};
+	
+	my $list=$obj->{records_fields}->{records_list};
+	$list->ClearAll();
+	
+	my $i=1;
+	for my $id (@{$obj->{process_file}->{word_records}->{$label}}) {
+		my @record=@{$obj->{process_file}->{records}->{$id}};
+
+		print STDERR Dumper \@record;
+	#my $mid=$list->InsertStringItem(0, "a");
+	#$list->SetItem($mid, 1, "b");
+	#$list->SetItem($mid, 2, "c");
+
+		#my $lid=$list->InsertStringItem(0, $record[0]);
+		#for my $j (1..$#record) {
+		#	$list->SetItem($lid, $j, $record[$j]);
+		#}
+	}
+	
+	#print STDERR $self;
 }
 
 sub OnMouseOut {
