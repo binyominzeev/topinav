@@ -56,7 +56,10 @@ sub reload_file {
 	my $byte_count=$stat[7];
 
 	my $flags = wxPD_CAN_ABORT|wxPD_AUTO_HIDE|wxPD_APP_MODAL;
-	my $dialog=Wx::ProgressDialog->new('Loading dataset', 'Loading dataset, please wait...', $self->{sample_size}, $frame, $flags);
+	#my $dialog=Wx::ProgressDialog->new('Loading dataset', 'Loading dataset, please wait...', $self->{sample_size}, $frame, $flags);
+	
+	#my $flags = wxPD_CAN_ABORT|wxPD_AUTO_HIDE;
+	my $dialog=Wx::ProgressDialog->new('Loading dataset', 'Loading dataset, please wait...', $self->{sample_size}, undef, $flags);
 
 	my $progress_val=0;
 	
