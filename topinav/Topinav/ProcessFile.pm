@@ -106,16 +106,10 @@ sub reload_file {
 		my @line=split/$separator/, $line;
 		$self->{records}->{$i}=\@line;
 		
-		$line=~s/\&\#x27\;/'/g;
-		
-		# wikipedia regexp - : elotti namespace, . utani extension kiszurese
-		$line=~s/^\s*\S+?://g;
-		$line=~s/\.\S+\s*$//g;
-		
-		my @szavak=$line=~/[\-a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ']+/g;
+		my $szavak=$self->string_to_words($line);
 		
 		my %szavak;
-		map { $szavak{$_}="" } sort grep { !exists $stopwords{$_} } @szavak;
+		map { $szavak{$_}="" } sort grep { !exists $stopwords{$_} } @$szavak;
 		@szavak=keys %szavak;
 		
 		for my $szo (@szavak) {
@@ -264,6 +258,86 @@ sub reload_file {
 	$frame->SetStatusText("$self->{filename} loaded (".(scalar @vertices)." keywords shown).");
 }
 
+sub edges_to_clusters {
+	my ($self, $pair_score)=@_;
+	
+	# ============== generate Pajek file ==============
+	
+	my %word_id;
+	my $last_word_id=1;
+	
+	my $pajek_filename="infomap";
+
+	my @vertices;
+	my @edges;
+	for my $word_pair (keys %$pair_score) {
+		$word_pair=~/ /;
+		
+		if (!exists $word_id{$`}) {
+			push @vertices, "$last_word_id \"$`\"";
+			$word_id{$`}=$last_word_id++;
+		}
+		if (!exists $word_id{$'}) {
+			push @vertices, "$last_word_id \"$'\"";
+			$word_id{$'}=$last_word_id++;
+		}
+		
+		push @edges, "$word_id{$`} $word_id{$'} $pair_score->{$word_pair}";
+	}
+	
+	open OUT, ">$pajek_filename.net";
+	print OUT "*Vertices ".(scalar @vertices)."\n".
+		(join "\n", @vertices)."\n";
+	print OUT "*Edges ".(scalar @edges)."\n".
+		(join "\n", @edges)."\n";
+	close OUT;
+
+	#print STDERR "*Vertices ".(scalar @vertices)."\n";
+	#print STDERR "*Edges ".(scalar @edges)."\n";
+	
+	my $tagclouds=$self->{parent}->{tagclouds};
+
+	%{$tagclouds->{words}}=();
+	map { $tagclouds->{words}->{$_}=$word_freq{$_} } keys %word_id;
+	
+	# ============== run clustering ==============
+	
+	`Infomap $pajek_filename.net ./`;
+	$tagclouds->load_word_clusters("$pajek_filename.tree");
+
+	unlink "$pajek_filename.net";
+	unlink "$pajek_filename.tree";
+	
+}
+
+sub save_sample {
+	my ($self, $filename)=@_;
+	
+	my $records=$self->{records};
+	
+	open OUT, ">$filename";
+	for my $i (keys %$records) {
+		print OUT "$i\t";
+		print OUT join "\t", @{$self->{records}->{$i}};
+		print OUT "\n";
+	}
+	close OUT;
+}
+
+sub load_sample {
+	my ($self, $filename)=@_;
+	
+	open IN, "<$filename";
+	while (<IN>) {
+		chomp;
+		my @a=split/\t/, $_;
+		my $id=shift @a;
+		
+		$self->{records}->{$id}=\@a;
+	}
+	close IN;
+}
+
 sub test_separator {
 	my $self=shift;
 	my $filename=shift;
@@ -287,6 +361,20 @@ sub test_separator {
 	}
 
 	return scalar keys %field_counts;
+}
+
+sub string_to_words {
+	my $self=shift;
+	my $string=shift;
+	
+	$string=~s/\&\#x27\;/'/g;
+	
+	# wikipedia regexp - : elotti namespace, . utani extension kiszurese
+	$string=~s/^\s*\S+?://g;
+	$string=~s/\.\S+\s*$//g;
+	
+	my @szavak=$string=~/[\-a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ']+/g;
+	return \@szavak;
 }
 
 1;
