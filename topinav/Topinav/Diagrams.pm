@@ -4,6 +4,9 @@ use Wx qw( :everything );
 use Chart::Gnuplot;
 use List::Util qw(shuffle);
 
+use Term::ProgressBar::Simple;
+use Data::Dumper;
+
 # ================= initialize =================
 
 my %stopwords;
@@ -73,7 +76,12 @@ sub use_clustering_infomap {
 	my %pair_score;
 	
 	for my $id (keys %$records) {
-		my @szavak=@{$records->{$id}};
+		my $line=join "\t", @{$records->{$id}};
+		my $szavak=$process_file->string_to_words($line);
+
+		my %szavak;
+		map { $szavak{$_}="" } sort grep { !exists $stopwords{$_} } @$szavak;
+		@szavak=keys %szavak;
 		
 		for my $i (0..$#szavak) {
 			for my $j ($i+1..$#szavak) {
@@ -84,6 +92,7 @@ sub use_clustering_infomap {
 		}
 	}
 	
+	$self->{word_to_cluster}=$process_file->edges_to_clusters(\%pair_score);
 }
 
 sub use_clustering_random {
@@ -227,6 +236,8 @@ sub generate_data {
 	@{$self->{data_x}}=();
 	@{$self->{data_y}}=();
 	
+	#my %debug;
+	
 	for my $record (values %$records) {
 		my $this_x=$record->[$self->{axe_x}];
 		my $this_y=$record->[$self->{axe_y}];
@@ -243,10 +254,19 @@ sub generate_data {
 		} elsif ($self->{mod_y} eq "word_cluster") {
 			my $words=$process_file->string_to_words($this_y);
 			map { $data{$this_x}->{$self->{word_to_cluster}->{$_}}=""; } @$words;
+			
+			#for my $word (@$words) {
+			#	$debug{$this_x}->{$self->{word_to_cluster}->{$word}}->{$word}="";
+			#}
 		} else {
 			$data{$this_x}->{$this_y}="";
 		}
 	}
+	
+	#$self->{debug}=\%debug;
+	
+	# utolso ev nem erdekes
+	#delete $data{2016};
 
 	for my $x (sort { $a <=> $b } keys %data) {
 		push @{$self->{data_x}}, $x;
@@ -255,6 +275,36 @@ sub generate_data {
 			push @{$self->{data_y}}, scalar keys %{$data{$x}};
 		#}
 	}
+}
+
+sub save_clustering_debug_data {
+	my $self=shift;
+	
+	my %cluster_to_word;
+	for my $word (keys %{$self->{word_to_cluster}}) {
+		$cluster_to_word{$self->{word_to_cluster}->{$word}}->{$word}="";
+	}
+	
+	my $debug=$self->{debug};
+
+	open OUT, ">debug.txt";
+	for my $year (sort keys %$debug) {
+		print OUT "$year\n";
+		for my $cluster (keys %{$debug->{$year}}) {
+			my %inactive_words=%{$cluster_to_word{$cluster}};
+			
+			my @active_words=sort keys %{$debug->{$year}->{$cluster}};
+			my $active_words=join " ", @active_words;
+			print OUT "$active_words\n";
+			
+			map { delete $inactive_words{$_}; } @active_words;
+			
+			my @inactive_words=sort keys %inactive_words;
+			my $inactive_words=join " ", @inactive_words;
+			print OUT "\t$inactive_words\n";
+		}
+	}
+	close OUT;
 }
 
 sub save_data {

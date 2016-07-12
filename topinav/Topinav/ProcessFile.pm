@@ -3,6 +3,8 @@ package Topinav::ProcessFile;
 use Data::Dumper;
 use Wx qw( :everything );
 
+use Term::ProgressBar::Simple;
+
 # ================= parameters =================
 
 my $word_limit=1000;
@@ -237,18 +239,21 @@ sub reload_file {
 	#print STDERR "*Vertices ".(scalar @vertices)."\n";
 	#print STDERR "*Edges ".(scalar @edges)."\n";
 	
+	my $word_to_cluster=$self->edges_to_clusters(\%pair_score);
+	
+	# ============== update tagclouds ==============
+	
 	my $tagclouds=$self->{parent}->{tagclouds};
 
 	%{$tagclouds->{words}}=();
 	map { $tagclouds->{words}->{$_}=$word_freq{$_} } keys %word_id;
 	
-	# ============== run clustering ==============
-	
-	`Infomap $pajek_filename.net ./`;
-	$tagclouds->load_word_clusters("$pajek_filename.tree");
+	#`Infomap $pajek_filename.net ./`;
+	#$tagclouds->load_word_clusters("$pajek_filename.tree");
+	$tagclouds->load_word_clusters($word_to_cluster);
 
-	unlink "$pajek_filename.net";
-	unlink "$pajek_filename.tree";
+	#unlink "$pajek_filename.net";
+	#unlink "$pajek_filename.tree";
 	
 	$max_font_size=$tagclouds->test_word_clusters($frame);
 	
@@ -270,7 +275,7 @@ sub edges_to_clusters {
 
 	my @vertices;
 	my @edges;
-	for my $word_pair (keys %$pair_score) {
+	for my $word_pair (sort keys %$pair_score) {
 		$word_pair=~/ /;
 		
 		if (!exists $word_id{$`}) {
@@ -295,19 +300,38 @@ sub edges_to_clusters {
 	#print STDERR "*Vertices ".(scalar @vertices)."\n";
 	#print STDERR "*Edges ".(scalar @edges)."\n";
 	
-	my $tagclouds=$self->{parent}->{tagclouds};
-
-	%{$tagclouds->{words}}=();
-	map { $tagclouds->{words}->{$_}=$word_freq{$_} } keys %word_id;
-	
 	# ============== run clustering ==============
 	
 	`Infomap $pajek_filename.net ./`;
-	$tagclouds->load_word_clusters("$pajek_filename.tree");
-
-	unlink "$pajek_filename.net";
-	unlink "$pajek_filename.tree";
 	
+	my %word_to_cluster;
+
+	open IN, "<$pajek_filename.tree";
+	while (<IN>) {
+		chomp;
+		if (/^[0-9]/) {
+			my ($coord, $rank, $word, $weight)=split/ /, $_;
+			$word=substr($word, 1, -1);
+			
+			my @coords=split/:/, $coord;
+			pop @coords;
+			my $cluster_coord=join ":", @coords;
+			
+			#if ($word eq "php") {
+		#		print STDERR "php $cluster_coord\n";
+		#	} else {
+				#print STDERR "$word ";
+		#	}
+			
+			$word_to_cluster{$word}=$cluster_coord;
+		}
+	}
+	close IN;
+
+	#unlink "$pajek_filename.net";
+	#unlink "$pajek_filename.tree";
+	
+	return \%word_to_cluster;
 }
 
 sub save_sample {
@@ -324,8 +348,19 @@ sub save_sample {
 	close OUT;
 }
 
+sub line_count {
+	my $filename=shift;
+	my $wc=`wc -l "$filename"`;
+	
+	$wc=~/[0-9]+/;
+	return $&;
+}
+
 sub load_sample {
 	my ($self, $filename)=@_;
+	
+	my $lc=line_count($filename);
+	my $progress=new Term::ProgressBar::Simple($lc);
 	
 	open IN, "<$filename";
 	while (<IN>) {
@@ -334,6 +369,7 @@ sub load_sample {
 		my $id=shift @a;
 		
 		$self->{records}->{$id}=\@a;
+		$progress++;
 	}
 	close IN;
 }

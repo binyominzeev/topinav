@@ -1,0 +1,200 @@
+91	22626285	2014-03-25t05:41:30.387	calculate time difference using timediff function for 12 hour format in mysql
+32	28861558	2015-03-04t17:58:56.553	launch a command in bash script with variables containing double quotes
+24	30146520	2015-05-10t00:44:04.750	difference between association, aggregation, composition and dependecy
+79	26847812	2014-11-10t16:01:43.927	wpf desktop application authentication remote database
+7	32257642	2015-08-27t19:10:03.020	bootstrapui: popover cut off by page end
+171	22363010	2014-03-12t20:25:16.543	get list of embedded resources in uberjar
+128	1588444	2009-10-19t12:35:59.577	use sql to count cases in a certain state at a certain time
+187	876852	2009-05-18t09:23:46.380	how is keyboard auto-repeat implemented on a windows pc?
+130	2252402	2010-02-12t14:24:52.497	android slide animation problem
+111	13641195	2012-11-30t08:04:54.690	how do i convert a int to an enum and a string using automapper and int from db
+64	30062570	2015-05-05t20:22:40.257	concurrentmodificationexception in iterator.next()
+30	32765879	2015-09-24t15:58:02.030	simple script - export groups and nested objects into file (dynamic)
+55	33566346	2015-11-06t11:59:20.147	accessing a socket.io earlier version?
+152	29674654	2015-04-16t12:24:49.843	android inappbilling v3 [rpc:s-7:aec-0]
+121	5496266	2011-03-31t06:57:16.280	microsoft's parallel patterns library: anyone looked to see how hard it'd be to port to posix / linux?
+63	5383240	2011-03-21t20:27:42.550	how do i make webpages in adobe flash cs5?
+33	11787662	2012-08-03t00:23:57.197	in java how do i change or set a default printer
+153	27367207	2014-12-08t21:23:17.757	how to make a data structure which can hold 100 most recent record_values basis on timestamp?
+165	29002743	2015-03-12t05:51:43.407	style android:dropdownlistviewstyle not working for samsung devices
+78	3806287	2010-09-27t17:29:49.437	linq-to-sql or linq-to-entities with asp.net 3.5 and sql server 2005
+161	32123988	2015-08-20t16:53:04.553	how to open a port on linux (debian jessie)
+48	21889919	2014-02-19t19:04:02.123	scanning for qr code in quicktime files in macos
+40	21969237	2014-02-23t14:06:24.550	wordpress latest news layout posts
+125	3318800	2010-07-23t13:58:56.840	how can i compare two versions of software, one of which is in a git repo?
+127	25617142	2014-09-02t06:31:03.277	cannot read property 'connection' of undefined. in cordova 3.2.0
+135	16736176	2013-05-24t13:29:53.890	chrome crashes with this js
+74	26381013	2014-10-15t11:07:06.487	introduce parameter object refactoring in intellij 13
+166	26635190	2014-10-29t16:02:39.470	how to calculate/sum numbers in a single cell in excel?
+6	8805829	2012-01-10t15:32:42.403	using multiple fields with complexphrasequeryparser in lucene
+60	3043665	2010-06-15t08:37:08.083	simple plot algorithm with autoscale
+38	27332644	2014-12-06t14:22:51.867	how to jump a cycle if?
+76	1516326	2009-10-04t12:43:14.610	grep with &quot;half&quot;-exact match
+45	15155798	2013-03-01t10:43:36.170	emacs modes/functions and xmonad
+87	25027006	2014-07-30t00:25:31.520	forcing full e-ink refresh on android
+148	9499392	2012-02-29t12:44:21.980	what is the idea behind private attribute access inside main? java x c++
+25	17253386	2013-06-22t17:25:09.130	seeking samples of grid graphs with holes that are considered &quot;difficult&quot; for finding hamiltonian cycle
+140	21921136	2014-02-20t22:32:03.477	scroll in a navbar (bootstrap 3), but keep the rest of the page still
+23	15191097	2013-03-03t21:26:51.147	eclipse maven plugin push to repo
+81	32773341	2015-09-25t01:22:02.657	three.js change visibility of multiple objects with dat.gui.js
+167	20479861	2013-12-09t20:16:39.733	transition table for knuth-morris-prat
+66	13080671	2012-10-26t04:20:22.547	dismissing presented view controller
+133	8380062	2011-12-05t01:24:09.367	use jquery to build form
+69	3919987	2010-10-13t00:19:42.297	get result from a vbscript in c#
+37	6249407	2011-06-06t08:28:51.660	jsf auto-login according to cookie
+73	31407411	2015-07-14t13:02:08.570	insert newline character after every line using python
+154	16176413	2013-04-23t18:19:02.727	display top portion of uiimageview
+197	29141127	2015-03-19t09:38:17.480	wamp server phpmyadmin page blank
+19	27090368	2014-11-23t15:05:59.387	get information from external url and put it on my own website
+18	6653901	2011-07-11t17:19:53.767	how can i uninstall or delete windows xp sp3 games using c# or free xp tools?
+185	4286947	2010-11-26t16:23:31.870	naming convention for variables in class constructor
+16	26954539	2014-11-16t06:34:26.500	google oauth 2.0 invalid credential
+138	14530782	2013-01-25t21:36:47.060	symfony2 - doctrine entity subdirectories
+186	8030010	2011-11-06t20:07:21.097	how to save drawing without its background?
+35	23562927	2014-05-09t10:58:37.700	how to deploy vsto excel solution so that administrator rights are not asked for both installation and usage?
+21	11107235	2012-06-19t18:36:55.007	select records matching a list of users with hadoop
+120	18042190	2013-08-04t10:58:23.807	jquery select 1 class after another?
+96	3397162	2010-08-03t13:53:16.763	html pagination
+147	4233844	2010-11-20t16:52:59.023	how to get the :remote =&gt; true working to update a part of the page?
+200	1472658	2009-09-24t16:04:02.087	strip tags thats are not in [code] [/code] segment
+58	30286853	2015-05-17t12:26:47.097	how do i run a docker image on google container engine?
+155	16279185	2013-04-29t12:55:56.313	product custom option type error in magento?
+13	429468	2009-01-09t19:55:54.510	schema design for when users can define fields
+146	26129417	2014-09-30t20:23:08.413	trying to set up a javascript that alerts user when changing price amount in netsuite
+65	22656349	2014-03-26t09:20:11.533	merging list of tuples in python
+108	30384989	2015-05-21t21:50:44.933	are files changed merely by choosing a different style from pulldown menu in design mode in android studio 1.1.0?
+42	19702582	2013-10-31t09:23:45.690	how to resolve strict warning in a shared host?
+107	20461148	2013-12-09t00:32:23.270	twitter gem for ruby on rails not working. what am i missing?
+43	18953642	2013-09-23t07:15:45.510	draw ascii character above rectangle with pygame
+109	20796110	2013-12-27t06:42:17.493	scale bitmap using drawbitmap
+123	33238722	2015-10-20t13:57:48.483	hibernate onetoone behaving like manytoone
+59	2063935	2010-01-14t12:17:38.430	javascript table select
+52	5689547	2011-04-16t20:53:30.560	array out of bounds, when i try to swap values
+17	6518988	2011-06-29t10:13:21.310	flex causes browser unresponsive when processing large amount of data
+198	33340613	2015-10-26t07:35:10.173	difference pivot_table pandas and excel
+132	34452305	2015-12-24t11:45:12.240	how to simplify composite type in variable
+103	20037793	2013-11-17t23:50:19.403	unique combinations of 4 from a list of tuples in haskell
+115	28495186	2015-02-13t08:19:28.753	push only scrollview while keyboard open android
+85	19232653	2013-10-07t19:09:48.040	double tap uisearchbar with search delegate on ios 7 causes uisearchbar to disappear
+137	22756795	2014-03-31t08:25:07.817	why i get executenonquery(); error after doing primary key?
+172	22921717	2014-04-07t19:50:41.377	how to set map center on loaded geojson features or what event is sent upon loadgeojson completion with 3.16 javascript api for google maps?
+101	14686227	2013-02-04t11:54:23.413	created file is not visible in the gallery, but is visible in a sdcard folder
+1	34086620	2015-12-04t10:51:00.247	making a page 100% width and height, with text scaling to match height?
+26	33025229	2015-10-08t20:19:49.707	how to share score on facebook using swift 2.0 and sprite kit
+75	23449831	2014-05-03t21:06:02.013	validate only newly typed text
+149	1823026	2009-11-30t23:00:52.093	using a diffgram in java
+193	23101056	2014-04-16t05:51:48.677	are there any wildcard characters for usage with stripos?
+41	30901449	2015-06-17t20:10:02.427	attempting to record mic input over bluetooth
+117	12644798	2012-09-28t17:39:29.680	ggplot2 100% pie chart error
+9	20066483	2013-11-19t08:23:29.437	cannot call methods on table ? table variable
+34	11230444	2012-06-27t15:59:58.330	converting date format using str_to_date
+129	8889766	2012-01-17t04:46:13.093	is there a gem that will send emails upon uncaught exceptions in a ruby on rails 2.3.8 app?
+99	30097310	2015-05-07t09:41:31.067	error: emfile, too many open files with gulp.watch
+106	32202190	2015-08-25t10:56:24.187	bash extract links from youtube html file
+113	18646231	2013-09-05t21:26:16.980	waitforchanged in a loop not firing after first call
+29	15866433	2013-04-07t18:54:40.130	writing contents of an array to txt file in perl
+51	23753513	2014-05-20t07:29:51.583	extract data from crystal reports via web service
+124	29620177	2015-04-14t06:02:43.257	how to fill a d3 pie using javascript?
+191	28417432	2015-02-09t19:11:02.963	2011 canadian computing competition: what is the minimum number of lights you need to turn on? (programming algorithm)
+61	31895480	2015-08-08t15:20:52.240	remove woocommerce process login action
+189	21180098	2014-01-17t07:23:11.013	cast list alias to base in c#
+102	25751579	2014-09-09t18:42:33.240	plotting data with multiple conditions on a single chart
+175	23070466	2014-04-14t21:09:22.887	java unexpected output from scanner
+168	12036779	2012-08-20t11:25:39.667	align dropdown sub menu with parent menu width
+164	7748115	2011-10-13t00:26:56.703	foreach with three variables add
+157	35680333	2016-02-28t08:29:35.513	backtracking algorithm times out for difficult sudoku puzzles
+95	5432140	2011-03-25t12:01:35.193	problem with displaying list thumbnail list in jqmobile
+100	21028962	2014-01-09t19:05:35.317	how to programmatically generate a trx file?
+196	6584188	2011-07-05t14:19:36.603	how to obtain all the nodes and connections after launching the gmf project
+178	22029729	2014-02-26t01:17:29.610	how can i swap pairs of elements in a stack?
+15	13510984	2012-11-22t10:44:11.133	java dependency triggers
+47	18512387	2013-08-29t13:29:47.637	regex_extract_all: how to perform regular expression matching on multiple columns
+93	4578556	2011-01-02t13:28:30.317	put multiple word document windows into the same parent window
+116	34784030	2016-01-14t07:40:51.973	how to select top 1 data order by date in sql and sqlite
+182	9980218	2012-04-02t16:34:50.697	issue in changing mapred heap size in amazon elastic mapreduce job
+27	1778406	2009-11-22t10:51:08.617	facebook file upload using ajax
+136	35033690	2016-01-27t09:41:20.383	no such module 'xxx' inside my testing target
+22	24332038	2014-06-20t16:45:33.213	testing if my program is executed from the bash/ksh/csh command line
+141	30328538	2015-05-19t14:29:15.513	drawing and update own map in android studio
+177	14621525	2013-01-31t08:38:38.090	openerp scheduler method with arguments: how to create them?
+112	10829888	2012-05-31t08:23:57.663	bullets trajectory
+88	28277669	2015-02-02t12:21:18.867	correctly redirect bot requests to static version of a website
+195	30540681	2015-05-29t23:46:34.107	with rails minitest, how do tests pass but fail when retested?
+159	34062097	2015-12-03t09:23:10.550	how to apply the bootstrap grid system for dynamic expanding div instead of window
+163	25602908	2014-09-01t09:38:20.530	symfony custom parameter fails when using composer
+170	29499217	2015-04-07t19:02:02.253	how tesseract-ocr calculate the &quot;certainty&quot; value of &quot;best_choice&quot; word?
+176	14209105	2013-01-08t06:02:49.323	can more than one function be added in an external javascript file? i.e .js file?
+104	20728488	2013-12-22t10:39:23.577	javascript or jquery gridview filter
+83	9676709	2012-03-13t00:23:21.927	rails model/controller structure
+12	18349845	2013-08-21t05:59:09.877	missing taskbar button context menu in windows xp with fm3
+89	3346531	2010-07-27t18:10:12.867	php mail &amp; ajax: message does not contain any form data
+4	31885484	2015-08-07t19:44:52.997	cannot invoke&quot; 'setviewcontroller' with an argument list of type [anyobject]
+90	6776533	2011-07-21t13:07:22.750	why am i getting an error when i try to update my heroku database?
+142	18860135	2013-09-17t21:22:17.143	mean and standard deviation wrong c#
+80	27583119	2014-12-20t18:31:31.627	equivalent method to navigationservice.refresh in windows phone 8.1?
+105	32862231	2015-09-30t09:12:11.343	order confirmation/completion email not sent for guests in woocommerce
+57	9491889	2012-02-29t00:20:37.730	allow links in tinymce
+184	34085963	2015-12-04t10:18:00.587	bins is not an integer in matplot #pymc
+188	32232659	2015-08-26t17:10:18.417	react: inline conditionally pass prop to component
+8	4520442	2010-12-23t16:08:37.310	what do i need to know to create xcode project templates?
+68	32815791	2015-09-28t04:40:22.310	t-sql query for customers that ordered every product - how?
+77	29273799	2015-03-26t08:20:53.257	importerror: no module named dom
+84	816557	2009-05-03t08:06:20.253	php mysql syntax for inserting date,time
+131	31292032	2015-07-08t12:00:15.863	converting from milliseconds to utc time in java
+20	3626307	2010-09-02t10:43:07.783	when do i need assign property and when not?
+114	5470219	2011-03-29t09:11:35.243	get md5 string from message digest
+10	30053539	2015-05-05t12:51:59.367	are calls to non-void methods faster if there is no assignment?
+98	29810544	2015-04-22t23:06:04.223	why can't i use guzzlehttp in laravel controller?
+151	11515274	2012-07-17t02:30:41.667	what is the difference between matrix&lt;depth&gt; and mcvmat in emgu cv?
+179	20214254	2013-11-26t10:21:05.337	checking the appearance of website on different browsers
+67	4416804	2010-12-11t12:57:13.983	array concatenation in php
+144	27741188	2015-01-02t11:10:03.733	vba to change dropdown value in internet explorer
+11	32481402	2015-09-09t13:50:26.233	realtime gnuplotting with python pipes and multiple plots
+122	9516334	2012-03-01t12:33:20.897	how to open gmail,yahoo mail and rediff mails in application programmatically?
+28	3205257	2010-07-08t15:29:00.677	how to hide entire datagrid in silverlight?
+160	5627613	2011-04-11t21:11:32.367	fmincon in matlab running out of memory
+181	23749046	2014-05-20t00:07:47.323	app crashes returning from photochoosertask
+139	33523013	2015-11-04t13:21:02.520	how to build a number from a list of numbers in prolog?
+119	28457903	2015-02-11t15:19:14.340	embed a search form in bootstrap 3 panel heading
+150	13861932	2012-12-13t14:27:58.300	how can i post on the facebook user's wall with a metro app (windows 8)?
+162	12104468	2012-08-24t06:50:29.793	programatically changing system settings or linking to them?
+31	635421	2009-03-11t16:54:43.813	toggling proximity sensor on iphone loses an event
+62	19043628	2013-09-27t05:57:49.310	google apps script - file getparents() and makecopy(), removefromfolder()
+92	17157670	2013-06-17t22:06:05.197	syntax error with paste special
+134	23289458	2014-04-25t09:39:37.140	is there any way to get the list of the inbuilt function of the sql server?
+97	12438356	2012-09-15t14:50:52.840	getpositionforsection and getsectionforposition and getsections methods for arrayadapter
+49	3063758	2010-06-17t16:52:44.580	wpf usercontrol interaction with parent view / viewmodel
+46	9852159	2012-03-24t13:33:51.633	calculate bounding box of arbitrary pixel-based drawing
+36	33243263	2015-10-20t17:39:36.990	how to modify vector of enum in place
+56	20169393	2013-11-23t23:50:51.157	mysql query results from multiple select form
+145	11634405	2012-07-24t15:37:59.170	open graph meta tags in body?
+82	4659267	2011-01-11t15:28:46.967	code analysis warnings does not warn while check-in tfs 2010
+72	23328173	2014-04-27t19:47:14.323	list of countries and their states in wordpress
+71	4961307	2011-02-10t18:49:39.073	iphone - heightforrowatindexpath scroll problem when setting a textview text
+118	31064987	2015-06-26t04:33:42.103	android - sending intent over mobile network
+54	16323029	2013-05-01t17:18:51.463	how to detect if a boost::function is pure virtual?
+94	12800411	2012-10-09t12:49:23.827	how to delete list-divider li once delete all of its child li
+110	33155409	2015-10-15t18:00:21.113	listener when java application stops or crashes
+44	25955369	2014-09-21t03:01:10.210	code for converting a compressed ipv6 adress into its long form
+2	35639223	2016-02-25t21:59:18.133	find all ocurences of letter change to diffrent letter
+180	10237530	2012-04-19t22:08:11.343	ssl connection fails with ios5.1 on 3g connection
+156	3663912	2010-09-08t01:09:04.993	css - how to make the a link work inside a div with background image
+192	15539248	2013-03-21t04:00:39.203	hbs module on express 3.0 adding text to the generated html
+86	4526454	2010-12-24t12:55:14.970	online payment process in radio button
+183	34114935	2015-12-06t07:00:13.160	npm err! 404 '@reactivex/rxjs' is not in the npm registry
+199	3521289	2010-08-19t11:32:01.870	unable to set dynamic data in jquery fullcalendar through ajax
+53	19055068	2013-09-27t15:52:17.357	how do i know if in app purchase works in my app?
+70	15677863	2013-03-28t09:08:33.623	zf2 - need to display specific error message on specific condition failure
+174	17026317	2013-06-10t14:30:53.830	how can i create an accordion using knockout js?
+173	34782407	2016-01-14t05:38:13.147	trying to read each line of code separate from a file
+194	32606979	2015-09-16t11:11:41.597	mysql count, group by and where clauses
+5	22237354	2014-03-06t22:20:10.437	issues signing phonegap ipa for distribution
+39	14907187	2013-02-16t05:11:59.060	c++ initialize nested struct
+14	11015333	2012-06-13t12:56:45.887	symfony2: use generated forms in jquery
+190	23913694	2014-05-28t13:57:04.810	rails 4 checkboxes of strings never return an empty array
+143	18812982	2013-09-15t13:33:34.697	showing a hint message upon hovering
+3	13480309	2012-11-20t19:07:19.640	how can i use fields from a previous join in the where criteria of my derived table?
+50	8122318	2011-11-14t13:31:41.327	how do i avoid copying 3rd party c++ dlls?
+158	11976091	2012-08-15t19:42:38.317	efficiently creating many instances of a winrt metro control
+126	14879878	2013-02-14t16:48:23.737	consume restful method from url with date param java
+169	12608637	2012-09-26t19:03:00.003	return count and data as json into extjs grid

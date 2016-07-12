@@ -143,11 +143,7 @@ sub load_word_weights {
 
 sub load_word_clusters {
 	my $self=shift;
-	my $filename="guardian-filtered-sample.tree";
-	
-	if (@_ > 0) {
-		$filename=shift;
-	}
+	my $word_to_cluster=shift;
 	
 	%{$self->{word_cluster}}=();
 	%{$self->{cluster_word}}=();
@@ -155,28 +151,17 @@ sub load_word_clusters {
 	my $min_weight=10000;
 	my $max_weight=0;
 	
-	my $max_cluster=0;
-	
-	open IN, "<$filename";
-	while (<IN>) {
-		chomp;
-		if (/^[0-9]/) {
-			my ($coord, $rank, $word, $weight)=split/ /, $_;
-			$word=substr($word, 1, -1);
-			$coord=~/:/;
-			
-			if (exists $self->{words}->{$word}) {
-				$self->{word_cluster}->{$word}=$`;
-				$self->{cluster_word}->{$`}->{$word}="";
-				
-				$max_cluster=$`;
+	for my $word (keys %$word_to_cluster) {
+		my $cluster=$word_to_cluster->{$word};
 
-				if ($self->{words}->{$word} > $max_weight) { $max_weight=$self->{words}->{$word}; }
-				if ($self->{words}->{$word} < $min_weight) { $min_weight=$self->{words}->{$word}; }
-			}
+		if (exists $self->{words}->{$word}) {
+			$self->{word_cluster}->{$word}=$cluster;
+			$self->{cluster_word}->{$cluster}->{$word}="";
+
+			if ($self->{words}->{$word} > $max_weight) { $max_weight=$self->{words}->{$word}; }
+			if ($self->{words}->{$word} < $min_weight) { $min_weight=$self->{words}->{$word}; }
 		}
 	}
-	close IN;
 	
 	for my $word (keys %{$self->{word_cluster}}) {
 		my $weight=$self->{words}->{$word};

@@ -12,8 +12,9 @@ use DateTime::Format::Strptime;
 
 # ========= local parameters =========
 
+my $sample_size=5000;
 #my $sample_size=2000;
-my $sample_size=200;
+#my $sample_size=200;
 my $repetitions=1;
 
 # ========= base classes =========
@@ -34,7 +35,8 @@ $diagrams_wordclust->{parent}->{process_file}=$process_file;
 # ========= init parameters =========
 
 $process_file->{sample_size}=$sample_size;
-$process_file->{filename}="so-id-title.txt";
+#$process_file->{filename}="so-id-title.txt";
+$process_file->{filename}="nyt-id-title.txt";
 
 my %x_param=(
 	axe_x => 1,
@@ -60,23 +62,30 @@ $diagrams_wordclust->{ylabel}="# of (temporal) word clusters";
 
 # ========= do =========
 
+#$process_file->reload_file();
+#$process_file->save_sample("my_sample_$sample_size.txt");
+#$process_file->load_sample("my_sample_$sample_size.txt");
+$process_file->load_sample("so-id-title.txt");
+
+exit;
+
 #for my $i (1..$repetitions) {
 	my $code=join'', map +(0..9,'a'..'z','A'..'Z')[rand(10+26*2)], 1..8;
 	#print STDERR "$i $code\n";
 
-	#$process_file->reload_file();
-	#$process_file->save_sample("my_sample.txt");
-	$process_file->load_sample("my_sample.txt");
 	$diagrams_wordclust->generate_word_data();
 	$diagrams_wordclust->filter_word_data();
 	
 	#$diagrams_wordclust->use_clustering_file("so-random-clusters.txt");
-	$diagrams_wordclust->use_clustering_wordtime();
+	#$diagrams_wordclust->use_clustering_wordtime();
+	$diagrams_wordclust->use_clustering_infomap();
 	$diagrams_wordclust->use_clustering_random();
 	
 	$diagrams_wordclust->generate_data();
 	$diagrams_wordclust->save_data("05-3-yearly-wordclust-$code.txt");
 	$diagrams_wordclust->save_image("05-3-yearly-wordclust-$code.png");
+	
+	#$diagrams_wordclust->save_clustering_debug_data();
 	exit;
 	
 	$diagrams_count->generate_data();
@@ -86,11 +95,4 @@ $diagrams_wordclust->{ylabel}="# of (temporal) word clusters";
 	$diagrams_words->generate_data();
 	$diagrams_words->save_data("05-2-yearly-words-$code.txt");
 	$diagrams_words->save_image("05-2-yearly-words-$code.png");
-
-	#$diagrams_wordclust->generate_data();
-	$diagrams_wordclust->generate_word_data();
-	$diagrams_wordclust->filter_word_data();
-	$diagrams_wordclust->save_word_data("word_data_image");
-	$diagrams_wordclust->save_word_image("word_data_image");
-	
 #}
