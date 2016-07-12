@@ -35,10 +35,6 @@ sub new {
 	my $self = {};
 	bless $self, $class;
 	
-	$self->{parent}=$param{parent};
-	$self->{frame}=$param{frame};
-	$self->{frame}->{parent_obj}=$self;
-	
 	$self->{sample_size}=1000;
 	
 	return $self;
@@ -48,7 +44,6 @@ sub new {
 
 sub reload_file {
 	my $self=shift;
-	my $frame=$self->{parent}->{frame};
 	my $obj=$self->{parent};
 	
 	# ============== initialize / progress ==============

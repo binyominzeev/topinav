@@ -18,11 +18,11 @@ my $repetitions=1;
 
 # ========= base classes =========
 
-my $process_file=new TopinavBig::ProcessFile(parent => $blind, frame => $blind);
+my $process_file=new TopinavBig::ProcessFile();
 
-my $diagrams_count=new TopinavBig::Diagrams(parent => $blind, frame => $blind);
-my $diagrams_words=new TopinavBig::Diagrams(parent => $blind, frame => $blind);
-my $diagrams_wordclust=new TopinavBig::Diagrams(parent => $blind, frame => $blind);
+my $diagrams_count=new TopinavBig::Diagrams();
+my $diagrams_words=new TopinavBig::Diagrams();
+my $diagrams_wordclust=new TopinavBig::Diagrams();
 
 # ========= base classes =========
 

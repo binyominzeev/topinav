@@ -17,12 +17,7 @@ sub new {
 	
 	my $self = {};
 	bless $self, $class;
-	
-	$self->{parent}=$param{parent};
-	$self->{frame}=$param{frame};
-	
-	my $button2=Wx::Button->new($self->{frame}, -1, 'Diagram');
-	
+		
 	$self->{year_parser}=DateTime::Format::Strptime->new(pattern => "%Y");
 
 	return $self;
