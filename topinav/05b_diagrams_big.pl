@@ -4,9 +4,8 @@ use warnings;
 
 use Data::Dumper;
 
-use Topinav::ProcessFile;
-use Topinav::BlindWindow;
-use Topinav::Diagrams;
+use TopinavBig::ProcessFile;
+use TopinavBig::Diagrams;
 
 use DateTime::Format::Strptime;
 
@@ -19,12 +18,11 @@ my $repetitions=1;
 
 # ========= base classes =========
 
-my $blind=new Topinav::BlindWindow();
-my $process_file=new Topinav::ProcessFile(parent => $blind, frame => $blind);
+my $process_file=new TopinavBig::ProcessFile(parent => $blind, frame => $blind);
 
-my $diagrams_count=new Topinav::Diagrams(parent => $blind, frame => $blind);
-my $diagrams_words=new Topinav::Diagrams(parent => $blind, frame => $blind);
-my $diagrams_wordclust=new Topinav::Diagrams(parent => $blind, frame => $blind);
+my $diagrams_count=new TopinavBig::Diagrams(parent => $blind, frame => $blind);
+my $diagrams_words=new TopinavBig::Diagrams(parent => $blind, frame => $blind);
+my $diagrams_wordclust=new TopinavBig::Diagrams(parent => $blind, frame => $blind);
 
 # ========= base classes =========
 
